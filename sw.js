@@ -17,11 +17,18 @@ self.addEventListener('install', event => {
     );
 });
 
-self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                return response || fetch(event.request);
-            })
-    );
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open('meu-pwa-cache-v1').then((cache) => {
+      return cache.addAll([
+        '/',
+        '/index.html',
+        '/css/main.css',
+        '/images/logo.png'
+      ]).catch((error) => {
+        // Este console.error vai mostrar qual arquivo específico falhou
+        console.error('Falha ao adicionar arquivos ao cache:', error);
+      });
+    })
+  );
 });
